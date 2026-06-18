@@ -8,9 +8,7 @@ export default function Cart({ order, setOrder }) {
   };
 
   const pay = async () => {
-    const res = await API.post(
-      `/orders/${order.id}/pay?paymentMethod=CASH`
-    );
+    const res = await API.post(`/orders/${order.id}/pay?paymentMethod=CASH`);
     setOrder(res.data);
   };
 
@@ -18,13 +16,8 @@ export default function Cart({ order, setOrder }) {
     <div>
       <h2>Cart</h2>
 
-      {order?.orderItems?.map((item, idx) => (
-        <div key={idx}>
-          Item ID: {item.menuItemId} | Qty: {item.quantity}
-        </div>
-      ))}
-
-      <h3>Total: {order.totalPrice}</h3>
+      <p>Order ID: {order.id}</p>
+      <p>Status: {order.status}</p>
 
       <button onClick={checkout}>Checkout</button>
       <button onClick={pay}>Pay</button>
