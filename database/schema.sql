@@ -1,0 +1,57 @@
+CREATE TABLE users (
+    id BIGINT PRIMARY KEY AUTO_INCREMENT,
+    name VARCHAR(100) NOT NULL,
+    email VARCHAR(150) NOT NULL UNIQUE,
+    password_hash VARCHAR(255) NOT NULL,
+    role ENUM('ADMIN', 'STAFF') NOT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE tables (
+    id BIGINT PRIMARY KEY AUTO_INCREMENT,
+    table_number INT NOT NULL UNIQUE,
+    status ENUM('AVAILABLE', 'OCCUPIED') DEFAULT 'AVAILABLE'
+);
+
+CREATE TABLE menu_items (
+    id BIGINT PRIMARY KEY AUTO_INCREMENT,
+    name VARCHAR(150) NOT NULL,
+    description TEXT,
+    price DECIMAL(10,2) NOT NULL,
+    category VARCHAR(100),
+    is_available BOOLEAN DEFAULT TRUE,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE orders (
+    id BIGINT PRIMARY KEY AUTO_INCREMENT,
+    table_id BIGINT NOT NULL,
+    created_by BIGINT NOT NULL,
+    status ENUM('OPEN', 'CHECKED_OUT', 'PAID') DEFAULT 'OPEN',
+    total_price DECIMAL(10,2) DEFAULT 0,
+    payment_method ENUM('CASH', 'CARD', 'E_WALLET') NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    FOREIGN KEY (table_id) REFERENCES tables(id),
+    FOREIGN KEY (created_by) REFERENCES users(id)
+);
+
+CREATE TABLE order_items (
+    id BIGINT PRIMARY KEY AUTO_INCREMENT,
+    order_id BIGINT NOT NULL,
+    menu_item_id BIGINT NOT NULL,
+    quantity INT NOT NULL CHECK (quantity > 0),
+    price_at_time DECIMAL(10,2) NOT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (order_id) REFERENCES orders(id) ON DELETE CASCADE,
+    FOREIGN KEY (menu_item_id) REFERENCES menu_items(id)
+);
+
+CREATE TABLE ai_requests (
+    id BIGINT PRIMARY KEY AUTO_INCREMENT,
+    order_id BIGINT,
+    input_text TEXT NOT NULL,
+    response_text TEXT NOT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (order_id) REFERENCES orders(id) ON DELETE SET NULL
+);
