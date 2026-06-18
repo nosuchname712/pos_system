@@ -5,12 +5,11 @@ import lombok.*;
 
 @Entity
 @Getter @Setter
-public class MenuItem {
+public class TableEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private String name;
-    private double price;
+    private String status; // AVAILABLE / OCCUPIED
 }
